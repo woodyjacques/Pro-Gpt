@@ -1,8 +1,7 @@
 import { FormEvent } from "react";
 import { mostrarMensaje } from "../Components/toast";
 import axios from "axios";
-const api = "https://pro-gpt-backend.vercel.app";
-// const api = "http://localhost:4000"
+import { api } from "./url";
 
 export const handleSubmitChat = async (
     event: FormEvent,
@@ -11,40 +10,22 @@ export const handleSubmitChat = async (
     metas: string,
     presupuesto: string,
     tono: string,
+    nombreCliente:string,
+    nombreEmpresa:string,
+    telefono:string,
+    correo:string,
     setTitulo: React.Dispatch<React.SetStateAction<string>>,
     setDescripcion: React.Dispatch<React.SetStateAction<string>>,
     setMetas: React.Dispatch<React.SetStateAction<string>>,
     setPresupuesto: React.Dispatch<React.SetStateAction<string>>,
     setTono: React.Dispatch<React.SetStateAction<string>>,
+    setNombreCliente: React.Dispatch<React.SetStateAction<string>>,
+    setNombreEmpresa: React.Dispatch<React.SetStateAction<string>>,
+    setTelefono: React.Dispatch<React.SetStateAction<string>>,
+    setCorreo: React.Dispatch<React.SetStateAction<string>>,
     animateText: (text: string) => void
 ) => {
     event.preventDefault();
-    const MensajeErr = document.getElementById("MensajeErrCat");
-
-    if (titulo === "") {
-        mostrarMensaje("Ingrese el título", MensajeErr);
-        return null;
-    }
-
-    if (descripcion === "") {
-        mostrarMensaje("Ingrese la descripción", MensajeErr);
-        return null;
-    }
-
-    if (metas === "") {
-        mostrarMensaje("Ingrese la meta", MensajeErr);
-        return null;
-    }
-
-    if (presupuesto === "") {
-        mostrarMensaje("Ingrese el presupuesto", MensajeErr);
-        return null;
-    }
-
-    if (tono === "") {
-        mostrarMensaje("Ingrese el tono", MensajeErr);
-        return null;
-    }
 
     function resetForm() {
         setTitulo("");
@@ -52,9 +33,13 @@ export const handleSubmitChat = async (
         setMetas("");
         setPresupuesto("");
         setTono("");
+        setNombreCliente("");
+        setNombreEmpresa("");
+        setTelefono("");
+        setCorreo("");
     }
 
-    console.log(titulo, descripcion, metas, presupuesto, tono, "Datos");
+    console.log(titulo, descripcion, metas, presupuesto, tono, nombreCliente, nombreEmpresa, telefono, correo, "Datos");
 
     try {
         const userSession = localStorage.getItem("USER_SESSION");
@@ -65,7 +50,7 @@ export const handleSubmitChat = async (
             email = userData.email;
         }
 
-        const responseRegister = await axios.post(`${api}/chat-gpt`, { titulo, descripcion, metas, presupuesto, tono, email });
+        const responseRegister = await axios.post(`${api}/chat-gpt`, { titulo, descripcion, metas, presupuesto, tono, nombreCliente, nombreEmpresa, telefono, correo, email});
         const mensaje = responseRegister.data.message;
         animateText(mensaje);
         return true;
@@ -73,42 +58,10 @@ export const handleSubmitChat = async (
         if (error instanceof Error) {
             const message = (error as any).response?.data.message;
             console.error("Error al generar la propuesta:", message);
-            mostrarMensaje(message, MensajeErr);
         } else {
             console.error("Error desconocido:", error);
         }
         resetForm();
-        return false;
-    }
-
-};
-
-export const handleSubmitEmailChat = async (
-    displayedText: string,
-    recipientEmail: string
-) => {
-
-    const MensajeAct = document.getElementById("MensajeActChat");
-
-    try {
-        const userSession = localStorage.getItem("USER_SESSION");
-        let emailUser = '';
-
-        if (userSession) {
-            const userData = JSON.parse(userSession);
-            emailUser = userData.email;
-        }
-
-        const responseRegister = await axios.post(`${api}/emailpro`, {
-            text: displayedText,
-            email: recipientEmail,
-            emailUser: emailUser
-        });
-
-        mostrarMensaje(responseRegister.data.message, MensajeAct);
-        return true;
-    } catch (error) {
-        console.error("Error al enviar la solicitud:", error);
         return false;
     }
 
@@ -147,5 +100,7 @@ export function handleClickEl(cate: any) {
             }
         });
 }
+
+
 
 
