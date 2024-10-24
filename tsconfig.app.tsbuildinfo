@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/vite-env.d.ts","./src/components/toast.tsx","./src/routes/router.tsx","./src/validation/autregister.tsx","./src/validation/autsesion.tsx","./src/view/home.tsx","./src/view/login.tsx","./src/view/register.tsx","./src/view/resetpasword.tsx","./src/view/verification.tsx","./src/view/works.tsx"],"version":"5.6.2"}
