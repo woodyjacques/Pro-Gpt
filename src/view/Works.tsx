@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleClickEl, obtenerPropuestas } from "../validation/generate";
 import { Modal } from "../Components/toast";
-import jsPDF from "jspdf";
+import { saveAs } from "file-saver";
 import axios from "axios";
 import { api } from "../validation/url";
 
@@ -64,89 +64,17 @@ function Works() {
     (product.titulo?.toLowerCase() || "").includes(searchTerm.toLowerCase())
   );
 
-  const handleDownloadPDF = async () => {
-    try {
-      const propuestas = await obtenerPropuestas();
+  const handleDownloadDocx = (descripcion: string) => {
+    const content = `
+      Descripción:\n
+      ${descripcion}\n
+    `;
 
-      if (!propuestas || propuestas.length === 0) {
-        alert("No hay propuestas para descargar.");
-        return;
-      }
+    const blob = new Blob([content], {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
 
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 10;
-      const textWidth = pageWidth - 2 * margin;
-      let yOffset = 20;
-
-      propuestas.forEach((propuesta: any, index: any) => {
-        doc.setFontSize(14);
-        doc.text(`Propuesta ${index + 1}: ${propuesta.titulo}`, margin, yOffset);
-        yOffset += 10;
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.text("Descripción:", margin, yOffset);
-        yOffset += 7;
-        doc.setFont("helvetica", "normal");
-        const descripcionLines = doc.splitTextToSize(propuesta.descripcion, textWidth);
-        descripcionLines.forEach((line: any) => {
-          if (yOffset > doc.internal.pageSize.height - margin) {
-            doc.addPage();
-            yOffset = margin;
-          }
-          doc.text(line, margin, yOffset);
-          yOffset += 7;
-        });
-
-        if (propuesta.metas) {
-          yOffset += 10;
-          doc.setFont("helvetica", "bold");
-          doc.text("Metas:", margin, yOffset);
-          yOffset += 7;
-          doc.setFont("helvetica", "normal");
-          const metasLines = doc.splitTextToSize(propuesta.metas, textWidth);
-          metasLines.forEach((line: any) => {
-            if (yOffset > doc.internal.pageSize.height - margin) {
-              doc.addPage();
-              yOffset = margin;
-            }
-            doc.text(line, margin, yOffset);
-            yOffset += 7;
-          });
-        }
-
-        if (propuesta.presupuesto) {
-          yOffset += 10;
-          doc.setFont("helvetica", "bold");
-          doc.text("Presupuesto:", margin, yOffset);
-          yOffset += 7;
-          doc.setFont("helvetica", "normal");
-          doc.text(propuesta.presupuesto, margin, yOffset);
-        }
-
-        if (propuesta.tono) {
-          yOffset += 10;
-          doc.setFont("helvetica", "bold");
-          doc.text("Tono:", margin, yOffset);
-          yOffset += 7;
-          doc.setFont("helvetica", "normal");
-          doc.text(propuesta.tono, margin, yOffset);
-        }
-
-        yOffset += 20;
-        if (yOffset > doc.internal.pageSize.height - margin) {
-          doc.addPage();
-          yOffset = margin;
-        }
-      });
-
-      doc.save("propuestas.pdf");
-
-    } catch (error) {
-      console.error("Error al obtener propuestas:", error);
-      alert("Hubo un error al intentar descargar las propuestas.");
-    }
+    saveAs(blob, `propuesta.docx`);
   };
 
   const handleFavorito = async (propuestaId: number) => {
@@ -226,7 +154,7 @@ function Works() {
                 <td className="px-6 py-4">{cate.descripcion.slice(0, 50)}...</td>
                 <td className="px-6 py-4">
                   <button
-                    onClick={() => handleDownloadPDF()}
+                    onClick={() => handleDownloadDocx(cate.descripcion)}
                     className="transition duration-300 transform hover:scale-105 bg-green-500 text-white py-0.5 px-2 text-sm rounded hover:bg-green-700"
                   >
                     Descargar

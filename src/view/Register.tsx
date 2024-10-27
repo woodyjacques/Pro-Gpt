@@ -19,7 +19,7 @@ function Register() {
 
     useEffect(() => {
         if (token) {
-            navigate("/generate");
+            navigate("/");
         }
     }, [token, navigate]);
 
@@ -43,8 +43,8 @@ function Register() {
     };
 
     return (
-        <section className="flex flex-col items-center py-16 bg-gradient-to-br from-red-900 to-gray-800">
-            <h2 className="text-3xl font-bold text-white mb-4">
+        <section className="flex flex-col items-center py-16 bg-gradient-to-br from-blue-900 to-gray-800">
+            <h2 className="text-3xl font-bold text-blue-500 mb-4">
                 Regístrate Ahora
             </h2>
             <p className="text-lg text-gray-200 mb-8 max-w-md text-center">

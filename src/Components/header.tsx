@@ -1,12 +1,19 @@
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import logoImage from '../assets/logoico.webp';
 import { Modal } from "./toast";
 
 function Header() {
-
     const [isAsideOpen, setIsAsideOpen] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isLogged, setIsLogged] = useState(false);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("ACCESS_TOKEN");
+        setIsLogged(!!token);
+    }, []);
 
     const showModal = () => {
         setIsModalVisible(!isModalVisible);
@@ -16,12 +23,20 @@ function Header() {
         setIsAsideOpen(!isAsideOpen);
     };
 
-    const navigate = useNavigate();
-
     const logOut = () => {
         localStorage.removeItem("ACCESS_TOKEN");
         localStorage.removeItem("USER_SESSION");
-        navigate("/login");
+        setIsLogged(false);
+        navigate("/");
+    };
+
+    const handleNavigation = (path:any) => {
+        if (!isLogged) {
+            navigate("/login");
+        } else {
+            navigate(path);
+            toggleAside();
+        }
     };
 
     return (
@@ -60,8 +75,7 @@ function Header() {
                                     alt="FlowBite Logo"
                                 />
                                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-white">
-                                    {" "}
-                                    Briefly{" "}
+                                    Briefly
                                 </span>
                             </Link>
                         </div>
@@ -77,37 +91,34 @@ function Header() {
             >
                 <div className="h-full px-3 pb-4 overflow-y-auto bg-gray-900 flex flex-col justify-between">
                     <ul className="space-y-2 font-medium">
-
                         <li>
-                            <NavLink
-                                to="/generate"
-                                className=" transition duration-300 transform hover:scale-105 flex items-center p-2 text-white rounded-lg bg-gray-800 hover:bg-gray-500"
-                                onClick={toggleAside}
+                            <button
+                                onClick={() => handleNavigation("/")}
+                                className="transition duration-300 transform hover:scale-105 flex items-center p-2 text-white rounded-lg bg-gray-800 hover:bg-gray-500 w-full text-left"
                             >
                                 <span className="flex-1 ml-3 whitespace-nowrap">Genera tus propuestas</span>
-                            </NavLink>
+                            </button>
                         </li>
-
                         <li>
-                            <NavLink
-                                to="/works"
-                                className="transition duration-300 transform hover:scale-105 flex items-center p-2 text-white rounded-lg bg-gray-800 hover:bg-gray-500"
-                                onClick={toggleAside}
+                            <button
+                                onClick={() => handleNavigation("/works")}
+                                className="transition duration-300 transform hover:scale-105 flex items-center p-2 text-white rounded-lg bg-gray-800 hover:bg-gray-500 w-full text-left"
                             >
                                 <span className="flex-1 ml-3 whitespace-nowrap">Historial de propuestas</span>
-                            </NavLink>
+                            </button>
                         </li>
-
                     </ul>
 
-                    <div className="mb-4">
-                        <button
-                            onClick={showModal}
-                            className="transition duration-300 transform hover:scale-105 w-full p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                        >
-                            Cerrar sesión
-                        </button>
-                    </div>
+                    {isLogged && (
+                        <div className="mb-4">
+                            <button
+                                onClick={showModal}
+                                className="transition duration-300 transform hover:scale-105 w-full p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                            >
+                                Cerrar sesión
+                            </button>
+                        </div>
+                    )}
                 </div>
             </aside>
 

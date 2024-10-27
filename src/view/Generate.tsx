@@ -1,25 +1,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { handleSubmitChat, obtenerPropuestas } from "../validation/generate";
-import jsPDF from "jspdf";
+import { handleSubmitChat } from "../validation/generate";
+import { saveAs } from "file-saver";
 
 function Generate() {
-
     const navigate = useNavigate();
     const token = localStorage.getItem("ACCESS_TOKEN");
 
-    useEffect(() => {
-        if (!token) {
-            navigate("/");
-        }
-    }, [token, navigate]);
-
-    if (!token) {
-        return null;
-    }
-
-    const [step, setStep] = useState(1);
-    const [progress, setProgress] = useState(20);
     const [isOpen, setIsOpen] = useState(false);
 
     const [titulo, setTitulo] = useState("");
@@ -33,11 +20,6 @@ function Generate() {
     const [correo, setCorreo] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [displayedText, setDisplayedText] = useState("");
-
-    const handleBack = () => {
-        setStep((prevStep) => prevStep - 1);
-        setProgress((prevProgress) => prevProgress - 40);
-    };
 
     const toggleModal = () => {
         setIsOpen(!isOpen);
@@ -67,143 +49,121 @@ function Generate() {
     };
 
     const handleSubmitGpt = async (event: FormEvent) => {
+        if (!token) {
+            navigate("/login");
+            return;
+        }
         event.preventDefault();
+
+        if (!nombreCliente || !nombreEmpresa || !telefono || !correo) {
+            alert('Por favor, complete todos los campos antes de enviar.');
+            return;
+        }
+
         setIsLoading(true);
-        await handleSubmitChat(event, titulo, descripcion, metas, presupuesto, tono, nombreCliente, nombreEmpresa, telefono, correo, setTitulo, setDescripcion, setMetas, setPresupuesto, setTono, setNombreCliente, setNombreEmpresa, setTelefono, setCorreo, animateText);
+        await handleSubmitChat(
+            event,
+            titulo,
+            descripcion,
+            metas,
+            presupuesto,
+            tono,
+            nombreCliente,
+            nombreEmpresa,
+            telefono,
+            correo,
+            setTitulo,
+            setDescripcion,
+            setMetas,
+            setPresupuesto,
+            setTono,
+            setNombreCliente,
+            setNombreEmpresa,
+            setTelefono,
+            setCorreo,
+            animateText
+        );
         setIsLoading(false);
         setIsOpen(!isOpen);
     };
 
     const handleCopy = () => {
+        if (!token) {
+            navigate("/login");
+            return;
+        }
         navigator.clipboard.writeText(displayedText).then(() => {
             alert("Texto copiado al portapapeles");
         }).catch((error) => {
             console.error("Error al copiar el texto:", error);
         });
     };
-
-    const handleDownloadPDF = async () => {
-        try {
-
-            const propuestas = await obtenerPropuestas();
-
-            if (!propuestas || propuestas.length === 0) {
-                alert("No hay propuestas para descargar.");
-                return;
-            }
-
-            const doc = new jsPDF();
-            const pageWidth = doc.internal.pageSize.width;
-            const margin = 10;
-            const textWidth = pageWidth - 2 * margin;
-            let yOffset = 20;
-
-            propuestas.forEach((propuesta:any, index:any) => {
-
-                doc.setFontSize(14);
-                doc.text(`Propuesta ${index + 1}: ${propuesta.titulo}`, margin, yOffset);
-                yOffset += 10;
-
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(12);
-                doc.text("Descripción:", margin, yOffset);
-                yOffset += 7;
-                doc.setFont("helvetica", "normal");
-                const descripcionLines = doc.splitTextToSize(propuesta.descripcion, textWidth);
-                descripcionLines.forEach((line:any) => {
-                    if (yOffset > doc.internal.pageSize.height - margin) {
-                        doc.addPage();
-                        yOffset = margin;
-                    }
-                    doc.text(line, margin, yOffset);
-                    yOffset += 7;
-                });
-
-                if (propuesta.metas) {
-                    yOffset += 10;
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Metas:", margin, yOffset);
-                    yOffset += 7;
-                    doc.setFont("helvetica", "normal");
-                    const metasLines = doc.splitTextToSize(propuesta.metas, textWidth);
-                    metasLines.forEach((line:any) => {
-                        if (yOffset > doc.internal.pageSize.height - margin) {
-                            doc.addPage();
-                            yOffset = margin;
-                        }
-                        doc.text(line, margin, yOffset);
-                        yOffset += 7;
-                    });
-                }
-
-                if (propuesta.presupuesto) {
-                    yOffset += 10;
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Presupuesto:", margin, yOffset);
-                    yOffset += 7;
-                    doc.setFont("helvetica", "normal");
-                    doc.text(propuesta.presupuesto, margin, yOffset);
-                }
-
-                if (propuesta.tono) {
-                    yOffset += 10;
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Tono:", margin, yOffset);
-                    yOffset += 7;
-                    doc.setFont("helvetica", "normal");
-                    doc.text(propuesta.tono, margin, yOffset);
-                }
-
-                yOffset += 20;
-                if (yOffset > doc.internal.pageSize.height - margin) {
-                    doc.addPage();
-                    yOffset = margin;
-                }
-            });
-
-            doc.save("propuestas.pdf");
-
-        } catch (error) {
-            console.error("Error al obtener propuestas:", error);
-            alert("Hubo un error al intentar descargar las propuestas.");
+    const handleDownloadDocx = () => {
+        if (!token) {
+            navigate("/login");
+            return;
         }
+
+        if (!displayedText) {
+            alert("No hay texto disponible para descargar.");
+            return;
+        }
+
+        const blob = new Blob([displayedText], {
+            type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+
+        saveAs(blob, "propuesta.docx");
+    };
+
+    const [step, setStep] = useState(1);
+    const [progress, setProgress] = useState(20);
+
+    const handleBack = () => {
+        setStep((prevStep) => prevStep - 1);
     };
 
     const handleNext = () => {
-        if (step === 1 && (!titulo || !descripcion)) {
-            alert('Por favor, complete todos los campos antes de continuar.');
-            return;
-        }
-        if (step === 2 && (!metas || !presupuesto || !tono)) {
+        if (step === 1 && (!titulo || !descripcion || !metas || !presupuesto || !tono)) {
             alert('Por favor, complete todos los campos antes de continuar.');
             return;
         }
 
-        if (step === 3 && (!nombreCliente || !nombreEmpresa || !telefono || !correo)) {
-            alert('Por favor, complete todos los campos antes de enviar.');
+        if (step === 2 && (!nombreCliente || !nombreEmpresa || !telefono || !correo)) {
+            alert('Por favor, complete todos los campos antes de continuar.');
             return;
         }
 
         setStep((prevStep) => prevStep + 1);
-        setProgress((prevProgress) => prevProgress + 40);
     };
+
+    useEffect(() => {
+        if (step === 1) {
+            setProgress(50);
+        } else if (step === 2) {
+            setProgress(100);
+        }
+    }, [step]);
 
     return (
         <div className="relative flex flex-col justify-between h-screen bg-gray-900 p-4 border-2 border-gray-200 rounded-lg mt-14 shadow-md">
 
             <div className="text-black text-2xl mb-4 p-4 rounded-lg shadow-lg bg-gray-800 flex justify-center items-center">
-                <p className="text-center text-white">Generador de propuestas</p>
+                <p className="text-center text-white">Briefly</p>
             </div>
 
             <div className="relative flex-grow mb-4 rounded-lg bg-gray-800">
                 <div className="absolute top-2 right-2 flex space-x-2 z-10">
                     <button
-                        onClick={handleDownloadPDF}
+                        onClick={handleDownloadDocx}
                         className="transition duration-300 transform hover:scale-105 bg-green-500 text-white py-0.5 px-2 text-sm rounded hover:bg-green-700"
                     >
-                        Descargar
+                        Descargar DOCX
                     </button>
-                    <button onClick={handleCopy} className="transition duration-300 transform hover:scale-105 bg-yellow-500 text-white py-0.5 px-2 text-sm rounded hover:bg-yellow-700">
+                    <button
+                        onClick={handleCopy}
+                        className="transition duration-300 transform hover:scale-105 bg-yellow-500 text-white py-0.5 px-2 text-sm rounded hover:bg-yellow-700"
+                    >
                         Copiar
                     </button>
                 </div>
@@ -216,7 +176,16 @@ function Generate() {
             </div>
 
             <div className="flex justify-center mb-4">
-                <button onClick={toggleModal} className="transition duration-300 transform hover:scale-105 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                <button
+                    onClick={() => {
+                        if (!token) {
+                            navigate("/login");
+                        } else {
+                            toggleModal();
+                        }
+                    }}
+                    className="transition duration-300 transform hover:scale-105 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                >
                     Generar Propuesta
                 </button>
             </div>
@@ -265,8 +234,9 @@ function Generate() {
                                     id="MensajeErrCat"
                                     className=" hidden text-red-500 text-sm font-medium rounded-lg text-center"
                                 ></p>
-                                <p className="text-white text-center mb-4">Paso {step} de 3</p>
+                                <p className="text-white text-center mb-4">Paso {step} de 2</p>
                                 <form onSubmit={handleSubmitGpt}>
+
                                     {step === 1 && (
                                         <div>
                                             <label className="block mb-2 text-sm font-medium text-white">
@@ -288,21 +258,8 @@ function Generate() {
                                                 onChange={(e) => setDescripcion(e.target.value)}
                                                 className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 block w-full p-2.5 placeholder-gray-400"
                                             ></textarea>
-
-                                            <button
-                                                type="button"
-                                                onClick={handleNext}
-                                                className="w-full p-2 bg-blue-600 text-white rounded mt-4"
-                                            >
-                                                Siguiente
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {step === 2 && (
-                                        <div>
                                             <label className="block mb-2 text-sm font-medium text-white">
-                                                Metas de la propuesta
+                                                Objetivo de la propuesta
                                             </label>
                                             <textarea
                                                 value={metas}
@@ -313,8 +270,12 @@ function Generate() {
                                             <label className="block mb-2 text-sm font-medium text-white">
                                                 Presupuesto
                                             </label>
-                                            <input value={presupuesto}
-                                                onChange={(e) => setPresupuesto(e.target.value)} className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 block w-full p-2.5 placeholder-gray-400" placeholder="Presupuesto del proyecto" />
+                                            <input
+                                                value={presupuesto}
+                                                onChange={(e) => setPresupuesto(e.target.value)}
+                                                className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 block w-full p-2.5 placeholder-gray-400"
+                                                placeholder="Presupuesto del proyecto"
+                                            />
 
                                             <label className="block mb-2 text-sm font-medium text-white">
                                                 Tono de la propuesta
@@ -331,26 +292,17 @@ function Generate() {
                                                 <option value="amigable">Amigable</option>
                                             </select>
 
-                                            <div className="flex justify-between mt-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={handleBack}
-                                                    className="p-2 bg-gray-600 text-white rounded"
-                                                >
-                                                    Atrás
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleNext}
-                                                    className="p-2 bg-blue-600 text-white rounded"
-                                                >
-                                                    Siguiente
-                                                </button>
-                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleNext}
+                                                className="w-full p-2 bg-blue-600 text-white rounded mt-4"
+                                            >
+                                                Siguiente
+                                            </button>
                                         </div>
                                     )}
 
-                                    {step === 3 && (
+                                    {step === 2 && (
                                         <div>
                                             <label className="block mb-2 text-sm font-medium text-white">
                                                 Nombre del cliente
@@ -402,7 +354,8 @@ function Generate() {
                                                 </button>
                                                 <button
                                                     type="submit"
-                                                    className="p-2 bg-green-600 text-white rounded" disabled={isLoading}
+                                                    className="p-2 bg-green-600 text-white rounded"
+                                                    disabled={isLoading}
                                                 >
                                                     {isLoading ? "Enviando..." : "Enviar"}
                                                 </button>
@@ -415,7 +368,6 @@ function Generate() {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }

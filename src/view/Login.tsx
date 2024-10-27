@@ -22,7 +22,7 @@ function Login() {
 
   useEffect(() => {
     if (token) {
-      navigate("/generate");
+      navigate("/");
     }
   }, [token, navigate]);
 
@@ -50,7 +50,7 @@ function Login() {
         localStorage.setItem("USER_SESSION", JSON.stringify(sessionData));
 
         setTimeout(() => {
-          navigate("/generate");
+          navigate("/");
         }, 1000);
       }
     }
@@ -77,7 +77,7 @@ function Login() {
       localStorage.setItem("USER_SESSION", JSON.stringify(sessionData));
 
       setTimeout(() => {
-        navigate("/generate");
+        navigate("/");
       }, 3000);
     }
 
@@ -85,7 +85,7 @@ function Login() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen text-white flex flex-col items-center justify-center">
+    <div className="bg-gradient-to-br from-blue-900 to-gray-800 min-h-screen text-white flex flex-col items-center justify-center">
       <header className="flex flex-col items-center text-center mb-8">
         <h1 className="text-4xl font-bold text-blue-500 mb-2">Inicia Sesión</h1>
         <p className="text-lg text-gray-200 mb-6 max-w-md">

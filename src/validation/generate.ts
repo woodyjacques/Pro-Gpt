@@ -10,10 +10,10 @@ export const handleSubmitChat = async (
     metas: string,
     presupuesto: string,
     tono: string,
-    nombreCliente:string,
-    nombreEmpresa:string,
-    telefono:string,
-    correo:string,
+    nombreCliente: string,
+    nombreEmpresa: string,
+    telefono: string,
+    correo: string,
     setTitulo: React.Dispatch<React.SetStateAction<string>>,
     setDescripcion: React.Dispatch<React.SetStateAction<string>>,
     setMetas: React.Dispatch<React.SetStateAction<string>>,
@@ -50,7 +50,7 @@ export const handleSubmitChat = async (
             email = userData.email;
         }
 
-        const responseRegister = await axios.post(`${api}/chat-gpt`, { titulo, descripcion, metas, presupuesto, tono, nombreCliente, nombreEmpresa, telefono, correo, email});
+        const responseRegister = await axios.post(`${api}/chat-gpt`, { titulo, descripcion, metas, presupuesto, tono, nombreCliente, nombreEmpresa, telefono, correo, email });
         const mensaje = responseRegister.data.message;
         animateText(mensaje);
         return true;
