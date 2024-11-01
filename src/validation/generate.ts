@@ -39,8 +39,6 @@ export const handleSubmitChat = async (
         setCorreo("");
     }
 
-    console.log(titulo, descripcion, metas, presupuesto, tono, nombreCliente, nombreEmpresa, telefono, correo, "Datos");
-
     try {
         const userSession = localStorage.getItem("USER_SESSION");
         let email = '';

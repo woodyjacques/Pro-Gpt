@@ -37,15 +37,16 @@ function Generate() {
     };
 
     const animateText = (text: string) => {
-        setDisplayedText("");
+        const cleanText = text.replace(/\bundefined\b/gi, '').trim();
         let index = 0;
-        const interval = setInterval(() => {
-            setDisplayedText((prev) => prev + text[index]);
-            index++;
-            if (index === text.length) {
-                clearInterval(interval);
+        function typeEffect() {
+            if (index < cleanText.length) {
+                setDisplayedText(cleanText.slice(0, index + 1)); 
+                index++;
+                requestAnimationFrame(typeEffect);
             }
-        }, 5);
+        }
+        typeEffect(); 
     };
 
     const handleSubmitGpt = async (event: FormEvent) => {
@@ -55,7 +56,7 @@ function Generate() {
         }
         event.preventDefault();
 
-        if (!nombreCliente || !nombreEmpresa || !telefono || !correo) {
+        if (!nombreCliente || !telefono || !correo) {
             alert('Por favor, complete todos los campos antes de enviar.');
             return;
         }
@@ -98,6 +99,7 @@ function Generate() {
             console.error("Error al copiar el texto:", error);
         });
     };
+
     const handleDownloadDocx = () => {
         if (!token) {
             navigate("/login");
@@ -116,20 +118,20 @@ function Generate() {
         saveAs(blob, "propuesta.docx");
     };
 
-    const [step, setStep] = useState(1);
-    const [progress, setProgress] = useState(20);
+    const [step, setStep] = useState(2);
+    const [progress, setProgress] = useState(50);
 
     const handleBack = () => {
         setStep((prevStep) => prevStep - 1);
     };
 
     const handleNext = () => {
-        if (step === 1 && (!titulo || !descripcion || !metas || !presupuesto || !tono)) {
+        if (step === 1 && (!titulo || !descripcion)) {
             alert('Por favor, complete todos los campos antes de continuar.');
             return;
         }
 
-        if (step === 2 && (!nombreCliente || !nombreEmpresa || !telefono || !correo)) {
+        if (step === 2 && (!nombreCliente || !telefono || !correo)) {
             alert('Por favor, complete todos los campos antes de continuar.');
             return;
         }
@@ -146,13 +148,13 @@ function Generate() {
     }, [step]);
 
     return (
-        <div className="relative flex flex-col justify-between h-screen bg-gray-900 p-4 border-2 border-gray-200 rounded-lg mt-14 shadow-md">
+        <div className="relative flex flex-col justify-between h-1/2 bg-gray-900 p-4 border-2 border-gray-200 rounded-lg mt-14 shadow-md">
 
             <div className="text-black text-2xl mb-4 p-4 rounded-lg shadow-lg bg-gray-800 flex justify-center items-center">
                 <p className="text-center text-white">Briefly</p>
             </div>
 
-            <div className="relative flex-grow mb-4 rounded-lg bg-gray-800">
+            <div className="relative flex-grow mb-4 rounded-lg bg-gray-800 h-64">
                 <div className="absolute top-2 right-2 flex space-x-2 z-10">
                     <button
                         onClick={handleDownloadDocx}
@@ -169,7 +171,6 @@ function Generate() {
                 </div>
                 <textarea
                     className="w-full h-full p-4 pt-12 text-white bg-transparent border-none resize-none outline-none"
-                    placeholder="Tus propuestas se verán aquí..."
                     value={displayedText}
                     readOnly
                 ></textarea>
@@ -286,7 +287,7 @@ function Generate() {
                                                 className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 block w-full p-2.5 placeholder-gray-400"
                                             >
                                                 <option value="">Selecciona el tono...</option>
-                                                <option value="formal">Formal</option>
+                                                <option value="formal">Profesional</option>
                                                 <option value="casual">Casual</option>
                                                 <option value="tecnico">Técnico</option>
                                                 <option value="amigable">Amigable</option>
@@ -368,6 +369,7 @@ function Generate() {
                     </div>
                 </div>
             )}
+
         </div>
     );
 }
