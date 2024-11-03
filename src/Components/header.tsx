@@ -30,7 +30,7 @@ function Header() {
         navigate("/");
     };
 
-    const handleNavigation = (path:any) => {
+    const handleNavigation = (path: any) => {
         if (!isLogged) {
             navigate("/login");
         } else {
@@ -107,18 +107,17 @@ function Header() {
                                 <span className="flex-1 ml-3 whitespace-nowrap">Historial de propuestas</span>
                             </button>
                         </li>
+                        {isLogged && (
+                            <li>
+                                <button
+                                    onClick={showModal}
+                                    className="transition duration-300 transform hover:scale-105 w-full p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                                >
+                                    Cerrar sesión
+                                </button>
+                            </li>
+                        )}
                     </ul>
-
-                    {isLogged && (
-                        <div className="mb-4">
-                            <button
-                                onClick={showModal}
-                                className="transition duration-300 transform hover:scale-105 w-full p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                            >
-                                Cerrar sesión
-                            </button>
-                        </div>
-                    )}
                 </div>
             </aside>
 
