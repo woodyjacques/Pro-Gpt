@@ -70,9 +70,9 @@ function ResetPassword() {
         </p>
       </header>
 
-      <form onSubmit={handleSubmitPassEmail} className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+      <form onSubmit={handleSubmitPassEmail} className="bg-gray-2 p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="mb-4 relative">
-          <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="new-password">
+          <label className="block text-black text-sm font-semibold mb-2" htmlFor="new-password">
             Nueva Contraseña
           </label>
           <input
@@ -80,7 +80,7 @@ function ResetPassword() {
             id="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-gray-200 text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ingresa tu nueva contraseña"
           />
           <button
@@ -92,7 +92,7 @@ function ResetPassword() {
           </button>
         </div>
         <div className="mb-6 relative">
-          <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="confirm-password">
+          <label className="block text-black text-sm font-semibold mb-2" htmlFor="confirm-password">
             Confirmar Contraseña
           </label>
           <input
@@ -100,7 +100,7 @@ function ResetPassword() {
             id="confirm-password"
             value={verPassword}
             onChange={(e) => setVerPassword(e.target.value)}
-            className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-gray-200 text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Confirma tu nueva contraseña"
           />
           <button

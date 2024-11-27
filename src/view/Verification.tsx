@@ -45,7 +45,7 @@ function Verification() {
                 </p>
             </header>
 
-            <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+            <form onSubmit={handleSubmit} className="bg-gray-200 p-8 rounded-lg shadow-lg w-full max-w-md">
                 <div className="mb-6">
                     <p
                         id="MensajeErr"
@@ -55,7 +55,7 @@ function Verification() {
                         id="MensajeAct"
                         className="hidden text-green-500 text-sm font-medium rounded-lg text-center"
                     ></p>
-                    <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="email">
+                    <label className="block text-black text-sm font-semibold mb-2" htmlFor="email">
                         Correo
                     </label>
                     <input
@@ -63,7 +63,7 @@ function Verification() {
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 rounded-lg bg-gray-200 text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Ingresa tu correo"
                     />
                 </div>

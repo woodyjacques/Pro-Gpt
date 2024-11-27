@@ -29,6 +29,8 @@ function Works() {
   const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDescriptionModalVisible, setIsDescriptionModalVisible] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState<string>("");
 
   useEffect(() => {
     obtenerPropuestas()
@@ -102,18 +104,28 @@ function Works() {
     }
   };
 
+  const showDescriptionModal = (description: string) => {
+    setSelectedDescription(description);
+    setIsDescriptionModalVisible(true);
+  };
+
+  const closeDescriptionModal = () => {
+    setSelectedDescription("");
+    setIsDescriptionModalVisible(false);
+  };
+
   return (
-    <div className=" bg-gray-900 p-4 border-2 border-gray-200 rounded-lg mt-14 shadow-md">
-      <div className="text-black text-2xl mb-4 p-4 rounded-lg shadow-lg bg-gray-800 flex items-center justify-between border border-solid border-gray-700">
+    <div className=" bg-white p-4 border-2 border-gray-200 rounded-lg mt-14 shadow-md">
+      <div className="text-black text-2xl mb-4 p-4 rounded-lg shadow-lg bg-blue-200 flex items-center justify-between border border-solid border-gray-700">
         <form className="w-full">
           <div className="relative w-full">
-            <p className="text-center text-white mb-2">Historial de propuestas</p>
+            <p className="text-center text-black mb-2">Historial de propuestas</p>
             <input
               type="search"
               id="default-search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 rounded-lg bg-white text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Buscar..."
               required
             />
@@ -122,8 +134,8 @@ function Works() {
       </div>
 
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left text-gray-400">
-          <thead className="text-xs text-gray-400 uppercase bg-gray-700">
+        <table className="w-full text-sm text-left text-black">
+          <thead className="text-xs text-black uppercase bg-blue-200">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Nombre
@@ -144,14 +156,19 @@ function Works() {
           </thead>
           <tbody>
             {filteredPro.map((cate) => (
-              <tr key={cate.id} className="border-b bg-gray-900 border-gray-700">
+              <tr key={cate.id} className="border-b bg-gray-100 border-gray-700">
                 <th
                   scope="row"
-                  className="px-6 py-4 font-medium whitespace-nowrap text-white"
+                  className="px-6 py-4 font-medium whitespace-nowrap text-black"
                 >
                   {cate.titulo}
                 </th>
-                <td className="px-6 py-4">{cate.descripcion.slice(0, 50)}...</td>
+                <td
+                  className="px-6 py-4 cursor-pointer text-black-500"
+                  onClick={() => showDescriptionModal(cate.descripcion)}
+                >
+                  {cate.descripcion.slice(0, 50)}...
+                </td>
                 <td className="px-6 py-4">
                   <button
                     onClick={() => handleDownloadDocx(cate.descripcion)}
@@ -188,6 +205,35 @@ function Works() {
           </tbody>
         </table>
       </div>
+
+      {isDescriptionModalVisible && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          onClick={closeDescriptionModal}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl"
+            onClick={(e) => e.stopPropagation()}  
+          >
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Descripción completa</h2>
+            <div className="max-h-96 overflow-y-auto">
+              <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+                {selectedDescription}
+              </p>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={closeDescriptionModal}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }

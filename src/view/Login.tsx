@@ -93,12 +93,12 @@ function Login() {
         </p>
       </header>
 
-      <form onSubmit={handleSubmitSesion} className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+      <form onSubmit={handleSubmitSesion} className="bg-gray-200 p-8 rounded-lg shadow-lg w-full max-w-md">
         <p id="MensajeErrUsuario" className="hidden text-red-500 text-sm font-medium rounded-lg text-center"></p>
         <p id="MensajeActUsuario" className="hidden text-green-500 text-sm font-medium rounded-lg text-center"></p>
 
         <div className="mb-4">
-          <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="email">
+          <label className="block text-black text-sm font-semibold mb-2" htmlFor="email">
             Correo
           </label>
           <input
@@ -106,12 +106,12 @@ function Login() {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-gray-200 text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ingresa tu correo"
           />
         </div>
         <div className="mb-2 relative">
-          <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="password">
+          <label className="block text-black text-sm font-semibold mb-2" htmlFor="password">
             Contraseña
           </label>
           <input
@@ -119,7 +119,7 @@ function Login() {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded-lg bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-gray-200 text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ingresa tu contraseña"
           />
           <button
