@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import logoImage from '../assets/logoico.webp';
+import logoImage from '../assets/logo.png';
 import { Modal } from "./toast";
 
 function Header() {
@@ -67,13 +67,13 @@ function Header() {
                                 </svg>
                             </button>
                             <Link to="/obtener" className="flex ml-2 md:mr-24">
+                                
+                                <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-white">
                                 <img
                                     src={logoImage}
-                                    className="h-8 mr-3 rounded-full"
+                                    className="h-12 rounded-full bg-white"
                                     alt="FlowBite Logo"
                                 />
-                                <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-white">
-                                    Briefly
                                 </span>
                             </Link>
                         </div>
